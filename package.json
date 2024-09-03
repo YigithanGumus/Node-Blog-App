@@ -1,0 +1,23 @@
+{
+  "name": "e-commerce-nodejs-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.1",
+    "jsonwebtoken": "^9.0.2",
+    "minio": "^8.0.1",
+    "mongoose": "^8.5.3",
+    "mysql2": "^3.11.0",
+    "nodemon": "^3.1.4"
+  }
+}
