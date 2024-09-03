@@ -6,6 +6,7 @@ const Minio = require('minio');
 const userRoute = require("./routes/user");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/post");
+const categoryRoute = require("./routes/category");
 const fileUpload = require('express-fileupload');
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/categories", categoryRoute);
 
 app.listen(5000, () => {
   console.log("API Aktif durumdadır!");
