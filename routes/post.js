@@ -59,7 +59,7 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 //   });
 // });
 
-router.post("/", async (req, res) => {
+router.post("/", verifyTokenAndAdmin, async (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send("No files were uploaded.");
   }
