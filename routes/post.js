@@ -8,7 +8,7 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const fs = require("fs");
 const path = require("path");
-const uploadFile = require('../utils/uploadFile');
+const uploadFile = require("../utils/uploadFile");
 
 router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
   if (req.body.password) {
@@ -60,29 +60,32 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 // });
 
 router.post("/", async (req, res) => {
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).send("No files were uploaded.");
-    }
-  
-    try {
-      const imgPath = await uploadFile(req.files.img, path.join(__dirname, '/../images/'));
-  
-      const newPost = new Post({
-        title: req.body.title,
-        content: req.body.content,
-        img: imgPath,  
-        categories: req.body.categories,
-        article: req.body.article,
-      });
-  
-      const savedPost = await newPost.save();
-      res.status(201).json(savedPost);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "File upload or post creation failed." });
-    }
-  });
-  
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send("No files were uploaded.");
+  }
+
+  try {
+    const imgPath = await uploadFile(
+      req.files.img,
+      path.join(__dirname, "/../images/")
+    );
+
+    const newPost = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      img: imgPath,
+      categories: req.body.categories,
+      article: req.body.article,
+    });
+
+    const savedPost = await newPost.save();
+    res.status(201).json(savedPost);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "File upload or post creation failed." });
+  }
+});
+
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.find();
