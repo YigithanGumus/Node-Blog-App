@@ -60,8 +60,8 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
 // });
 
 router.post("/", verifyTokenAndAdmin, async (req, res) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+  if (!req.files || !req.files.img) {
+    return res.status(400).send("No image file was uploaded.");
   }
 
   try {
@@ -69,12 +69,12 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
       req.files.img,
       path.join(__dirname, "/../images/")
     );
-
+    
     const newPost = new Post({
       title: req.body.title,
       content: req.body.content,
       img: imgPath,
-      categories: req.body.categories,
+      categories: req.body.categories, 
       article: req.body.article,
     });
 
@@ -86,9 +86,12 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
+
 router.get("/", async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find()
+      .populate('categories') // Kategorileri getirir
+      .populate('user_id');  // Kullanıcıyı getirir
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
@@ -97,7 +100,9 @@ router.get("/", async (req, res) => {
 
 router.get("/find/:id", async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id)
+      .populate('categories')
+      .populate('user_id');
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json(error);

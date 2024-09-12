@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const CommentSchema = new mongoose.Schema(
   {
-    post_id: { type: Number, required: true },
+    post_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },  // Post'a referans
     email: { type: String, required: true },
     content: { type: String, required: true },
   },
