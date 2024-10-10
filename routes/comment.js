@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const comments = await Comment.find().populate('post_id');
+    const comments = await Comment.find().populate('post_id').exec();
 
     if (!comments) {
       return res.status(404).json({ error: "Comments not found." });
@@ -46,17 +46,18 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-router.get("/find/:id", async (req, res) => {
+router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
-    const Comment = await Comment.findById(req.params.id).populate('post_id');
+    const comment = await Comment.findById(req.params.id).populate("post_id").exec();
 
-    if (!Comment) {
-      return res.status(404).json({ error: "Comment not found." });
+    if (!comment) {
+      return res.status(404).json({ error: "Yorum bulunamadı." });
     }
 
-    res.status(200).json(Comment);
+    res.status(200).json(comment);
   } catch (error) {
-    res.status(404).json(error);
+    console.error("Yorum arama hatası:", error);
+    res.status(500).json({ error: "Sunucu hatası oluştu." });
   }
 });
 
