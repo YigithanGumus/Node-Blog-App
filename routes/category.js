@@ -6,7 +6,7 @@ const {
 
 const router = require("express").Router();
 const Category = require("../models/Category");
-
+const Post = require("../models/Post");
 router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
   if (req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
@@ -43,8 +43,8 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const Categorys = await Category.find();
-    res.status(200).json(Categorys);
+    const Categories = await Category.find();
+    res.status(200).json(Categories);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -52,10 +52,43 @@ router.get("/", async (req, res) => {
 
 router.get("/find/:id", async (req, res) => {
   try {
-    const Category = await Category.findById(req.params.id);
-    res.status(200).json(Category);
+    const category = await Category.findById(req.params.id);
+    
+    if (!category) {
+      return res.status(404).json({ error: "Kategori bulunamadı." });
+    }
+
+    const posts = await Post.find({ categories: category._id });
+    category.posts = posts;
+
+    const result = {
+      category: category,
+      posts: posts
+    };
+
+    res.status(200).json(result);
   } catch (error) {
-    res.status(404).json(error);
+    console.error("Kategori arama hatası:", error);
+    res.status(500).json({ error: "Sunucu hatası oluştu." });
+  }
+});
+
+router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    
+    if (!category) {
+      return res.status(404).json({ error: "Kategori bulunamadı." });
+    }
+
+    await category.delete();
+
+    await Post.deleteMany({ categories: category._id });
+
+    res.status(200).json("Kategori başarıyla silindi.");
+  } catch (error) {
+    console.error("Kategori silme hatası:", error);
+    res.status(500).json({ error: "Sunucu hatası oluştu." });
   }
 });
 
